@@ -574,7 +574,7 @@ function filtered(){
   const q=(document.getElementById('searchInput')?.value||'').trim().toLowerCase();
   let d=items.filter(i=>currentCat==='全部'||i.cat===currentCat);
   if(q) d=d.filter(i=>i.name.toLowerCase().includes(q));
-  if(filterStore) d=d.filter(i=>i.prices[filterStore]!=null);
+  if(filterStore) d=d.filter(i=>(i.prices||{})[filterStore]!=null);
   if(filterMfr) d=d.filter(i=>i.mfr===filterMfr);
   if(filterExpOnly) d=d.filter(i=>isExpiring(i));
   const s=document.getElementById('sortSel')?.value||'slot_asc';
@@ -657,7 +657,7 @@ function renderFilterBar(){
 function renderStats(){
   const d=filtered();
   const totalSave=d.reduce((s,i)=>s+saving(i)*i.qty,0);
-  const missing=d.filter(i=>stores.some(s=>i.prices[s.name]==null)).length;
+  const missing=d.filter(i=>stores.some(s=>(i.prices||{})[s.name]==null)).length;
   const low=d.filter(i=>i.qty<=5&&i.qty>0).length;
   const expired=items.filter(i=>{const s=expiryStatus(i);return s.cls==='expired';}).length;
   const expiring=items.filter(i=>isExpiring(i)).length;
@@ -807,7 +807,7 @@ function confirmAddStore(){
   if(!name||stores.find(s=>s.name===name))return;
   const type=document.querySelector('#storeModal .type-pill.selected')?.dataset.t||'其他';
   stores.push({name,type});
-  items.forEach(i=>{if(i.prices[name]===undefined)i.prices[name]=null;});
+  items.forEach(i=>{if(!i.prices)i.prices={};if(i.prices[name]===undefined)i.prices[name]=null;});
   closeModal('storeModal');renderQuickAdd();render();
   notify(`已新增採購通路：${name}`);syncSave();
 }
@@ -941,7 +941,7 @@ function exportCSV(){
     const b=bp(item),sv=saving(item),bs=bstores(item),est=expiryStatus(item);
     rows.push([item.name,item.cat,item.mfr||'',item.slot||'',item.qty,
       item.restock||'',item.expiry||'',est.days??'',est.label,
-      ...snames.map(n=>item.prices[n]??''),
+      ...snames.map(n=>(item.prices||{})[n]??''),
       b??'',bs.join('/'),sv>0?sv:'',sv>0?sv*item.qty:'']);
   });
   const csv=rows.map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
