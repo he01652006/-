@@ -383,6 +383,10 @@ tbody tr.row-expired{animation:pulse-danger 2.5s infinite}
       <div><label style="display:block;font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.07em">庫存</label>
         <input id="im_qty" type="number" placeholder="0" min="0" step="1"></div>
     </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:11px">
+      <div><label style="display:block;font-size:10px;color:var(--accent);margin-bottom:4px;text-transform:uppercase;letter-spacing:.07em">販售價格（NT$）</label>
+        <input id="im_sellingPrice" type="number" placeholder="0" min="0" step="1"></div>
+    </div>
     <!-- 進貨 & 效期 -->
     <hr class="modal-divider">
     <div class="sec-head"><span class="sec-dot" style="background:var(--info)"></span>進貨與效期資訊</div>
@@ -472,20 +476,29 @@ function daysUntil(dateStr){ if(!dateStr)return null; const d=new Date(dateStr);
 function fmtDate(s){ if(!s)return ''; const[y,m,d]=s.split('-');return`${y}/${m}/${d}`; }
 
 let stores=[
-  {name:'家樂福',type:'量販店'},
-  {name:'大潤發',type:'量販店'},
-  {name:'全聯',type:'超市'},
-  {name:'蝦皮購物',type:'電商平台'},
+  {name:"酷澎",type:"電商平台"},
+  {name:"向陽",type:"實體賣場"},
+  {name:"MOMO",type:"電商平台"},
+  {name:"好市多",type:"電商平台"}
 ];
 let manufacturers=[
-  {name:'可口可樂',type:'進口品牌'},
-  {name:'金車',type:'飲料大廠'},
-  {name:'泰山企業',type:'飲料大廠'},
-  {name:'統一企業',type:'飲料大廠'},
-  {name:'愛之味',type:'飲料大廠'},
-  {name:'樂天',type:'進口品牌'},
-  {name:'伊藤園',type:'進口品牌'},
-  {name:'紅牛',type:'進口品牌'},
+  {name:"金車",type:"飲料大廠"},
+  {name:"泰山企業",type:"飲料大廠"},
+  {name:"統一企業",type:"飲料大廠"},
+  {name:"愛之味",type:"飲料大廠"},
+  {name:"樂天",type:"進口品牌"},
+  {name:"伊藤園",type:"進口品牌"},
+  {name:"紅牛",type:"進口品牌"},
+  {name:"紅牌",type:"飲料大廠"},
+  {name:"東方飲",type:"飲料大廠"},
+  {name:"御茶園",type:"飲料大廠"},
+  {name:"Tree top",type:"飲料大廠"},
+  {name:"維他露",type:"飲料大廠"},
+  {name:"保力達",type:"飲料大廠"},
+  {name:"百事",type:"飲料大廠"},
+  {name:"太古可口可樂",type:"飲料大廠"},
+  {name:"黑松",type:"飲料大廠"},
+  {name:"悅氏",type:"飲料大廠"}
 ];
 
 // Generate sample dates relative to today
@@ -493,48 +506,48 @@ function daysFromNow(n){const d=new Date(TODAY);d.setDate(d.getDate()+n);return 
 function daysAgo(n){return daysFromNow(-n);}
 
 let items=[
-  {id:1, name:'海鹽沙士 330ml',        cat:'碳酸飲料', mfr:'泰山企業', slot:'1',  qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:2, name:'可口可樂 330ml',         cat:'碳酸飲料', mfr:'可口可樂', slot:'2',  qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:3, name:'百事可樂 330ml',         cat:'碳酸飲料', mfr:'',         slot:'3',  qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:4, name:'雪碧 330ml',             cat:'碳酸飲料', mfr:'可口可樂', slot:'4',  qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:5, name:'白葡萄氣泡飲 330ml',    cat:'碳酸飲料', mfr:'',         slot:'5',  qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:6, name:'樹頂蘋果汁 320ml',      cat:'果汁',     mfr:'',         slot:'6',  qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:7, name:'泰山仙草蜜 330ml',        cat:'茶飲',     mfr:'泰山企業', slot:'7',  qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:8, name:'伯朗咖啡(咖) 240ml',    cat:'咖啡',     mfr:'金車',     slot:'8',  qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:9, name:'伯朗咖啡(藍) 240ml',    cat:'咖啡',     mfr:'金車',     slot:'9',  qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:10,name:'伯朗咖啡(綠) 240ml',    cat:'咖啡',     mfr:'金車',     slot:'10', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:11,name:'樂天優格飲(原味) 250ml',cat:'其他',     mfr:'樂天',     slot:'11', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:12,name:'麥香奶茶 340ml',         cat:'茶飲',     mfr:'統一企業', slot:'12', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:13,name:'八寶粥 330ml',             cat:'其他',     mfr:'愛之味',   slot:'13', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:14,name:'牛奶花生 170ml',            cat:'其他',     mfr:'愛之味',   slot:'14', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:15,name:'冬瓜露 330ml',           cat:'茶飲',     mfr:'',         slot:'15', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:16,name:'健酪(藍) 320ml',         cat:'其他',     mfr:'',         slot:'16', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:17,name:'健酪(紅) 320ml',         cat:'其他',     mfr:'',         slot:'17', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:18,name:'維他露P',                cat:'碳酸飲料', mfr:'',         slot:'18', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:19,name:'紅牛 250ml',             cat:'能量飲料', mfr:'紅牛',     slot:'19', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:20,name:'蠻牛(黃) 250ml',         cat:'能量飲料', mfr:'',         slot:'20', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:21,name:'蠻牛(白) 250ml',         cat:'能量飲料', mfr:'',         slot:'21', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:22,name:'伊藤園無糖綠茶 530ml',  cat:'茶飲',     mfr:'伊藤園',   slot:'22', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:23,name:'動元素 600ml',           cat:'其他',     mfr:'',         slot:'23', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:24,name:'舒跑 590ml',             cat:'其他',     mfr:'',         slot:'24', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:25,name:'愛之味麥仔茶 590ml',    cat:'茶飲',     mfr:'愛之味',   slot:'25', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:26,name:'奧利多水 585ml',         cat:'其他',     mfr:'',         slot:'26', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:27,name:'泰山冰鎮芭樂綠 535ml',  cat:'茶飲',     mfr:'泰山企業', slot:'27', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:28,name:'泰山冰鎮檸檬 535ml',    cat:'茶飲',     mfr:'泰山企業', slot:'28', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:29,name:'蜜桃紅茶 535ml',         cat:'茶飲',     mfr:'',         slot:'29', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:30,name:'蘋果紅茶 535ml',         cat:'茶飲',     mfr:'',         slot:'30', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:31,name:'原萃玉露 580ml',         cat:'茶飲',     mfr:'',         slot:'31', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:32,name:'特上紅茶 550ml',         cat:'茶飲',     mfr:'',         slot:'32', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:33,name:'茶裏王(黃) 600ml',       cat:'茶飲',     mfr:'統一企業', slot:'33', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:34,name:'麥香阿薩姆紅茶 600ml',  cat:'茶飲',     mfr:'統一企業', slot:'34', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:35,name:'麥香阿薩姆奶茶 600ml',  cat:'茶飲',     mfr:'統一企業', slot:'35', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:36,name:'原萃日式綠茶 580ml',    cat:'茶飲',     mfr:'',         slot:'36', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:37,name:'悅氏礦泉水 600ml',      cat:'水',       mfr:'泰山企業', slot:'37', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:38,name:'悅氏礦泉水 600ml',      cat:'水',       mfr:'泰山企業', slot:'38', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:39,name:'黑松純水 580ml',         cat:'水',       mfr:'',         slot:'39', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:40,name:'悅氏礦泉水 600ml',      cat:'水',       mfr:'泰山企業', slot:'40', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:41,name:'悅氏礦泉水 600ml',      cat:'水',       mfr:'泰山企業', slot:'41', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
-  {id:42,name:'悅氏礦泉水 600ml',      cat:'水',       mfr:'泰山企業', slot:'42', qty:0, restock:'', expiry:'', warnDays:30, prices:{'家樂福':null,'大潤發':null,'全聯':null,'蝦皮購物':null}},
+  {id:1,name:"海鹽沙士 330ml",cat:"碳酸飲料",mfr:"泰山企業",slot:"1",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:2,name:"可口可樂 330ml",cat:"碳酸飲料",mfr:"太古可口可樂",slot:"2",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:3,name:"百事可樂 330ml",cat:"碳酸飲料",mfr:"百事",slot:"3",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:4,name:"雪碧 330ml",cat:"碳酸飲料",mfr:"太古可口可樂",slot:"4",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:5,name:"白葡萄氣泡飲 330ml",cat:"碳酸飲料",mfr:"東方飲",slot:"5",sellingPrice:20,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:6,name:"樹頂蘋果汁 320ml",cat:"果汁",mfr:"Tree top",slot:"6",sellingPrice:30,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:7,name:"泰山仙草蜜330ml",cat:"茶飲",mfr:"泰山企業",slot:"7",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:8,name:"伯朗咖啡(咖) 240ml",cat:"咖啡",mfr:"金車",slot:"8",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:9,name:"伯朗咖啡(藍) 240ml",cat:"咖啡",mfr:"金車",slot:"9",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:10,name:"伯朗咖啡(綠) 240ml",cat:"咖啡",mfr:"金車",slot:"10",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:11,name:"樂天優格飲(原味) 250ml",cat:"其他",mfr:"樂天",slot:"11",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:12,name:"麥香奶茶 340ml",cat:"茶飲",mfr:"統一企業",slot:"12",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:13,name:"八寶粥375g",cat:"其他",mfr:"愛之味",slot:"13",sellingPrice:35,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:14,name:"牛奶花生340g",cat:"其他",mfr:"愛之味",slot:"14",sellingPrice:35,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:15,name:"冬瓜露 330ml",cat:"茶飲",mfr:"紅牌",slot:"15",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:16,name:"健酪(藍) 320ml",cat:"其他",mfr:"金車",slot:"16",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:17,name:"健酪(紅) 320ml",cat:"其他",mfr:"金車",slot:"17",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:18,name:"維他露P 250ml",cat:"碳酸飲料",mfr:"維他露",slot:"18",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:19,name:"紅牛 250ml",cat:"能量飲料",mfr:"紅牛",slot:"19",sellingPrice:65,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:20,name:"蠻牛(黃) 250ml",cat:"能量飲料",mfr:"保力達",slot:"20",sellingPrice:30,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:21,name:"蠻牛(白) 250ml",cat:"能量飲料",mfr:"保力達",slot:"21",sellingPrice:30,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:22,name:"伊藤園無糖綠茶 530ml",cat:"茶飲",mfr:"伊藤園",slot:"22",sellingPrice:30,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:23,name:"動元素 600ml",cat:"其他",mfr:"太古可口可樂",slot:"23",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:24,name:"舒跑 590ml",cat:"其他",mfr:"維他露",slot:"24",sellingPrice:30,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:25,name:"愛之味麥仔茶 590ml",cat:"茶飲",mfr:"愛之味",slot:"25",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:26,name:"奧利多水 585ml",cat:"其他",mfr:"金車",slot:"26",sellingPrice:30,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:27,name:"泰山冰鎮芭樂綠 535ml",cat:"茶飲",mfr:"泰山企業",slot:"27",sellingPrice:35,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:28,name:"泰山冰鎮檸檬 535ml",cat:"茶飲",mfr:"泰山企業",slot:"28",sellingPrice:35,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:29,name:"蜜桃紅茶 535ml",cat:"茶飲",mfr:"伊藤園",slot:"29",sellingPrice:35,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:30,name:"蘋果紅茶 535ml",cat:"茶飲",mfr:"伊藤園",slot:"30",sellingPrice:35,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:31,name:"原萃玉露 580ml",cat:"茶飲",mfr:"太古可口可樂",slot:"31",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:32,name:"特上紅茶 550ml",cat:"茶飲",mfr:"御茶園",slot:"32",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:33,name:"茶裏王(黃) 600ml",cat:"茶飲",mfr:"統一企業",slot:"33",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:34,name:"麥香阿薩姆紅茶 600ml",cat:"茶飲",mfr:"統一企業",slot:"34",sellingPrice:30,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:35,name:"麥香阿薩姆奶茶 600ml",cat:"茶飲",mfr:"統一企業",slot:"35",sellingPrice:30,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:36,name:"原萃日式綠茶 580ml",cat:"茶飲",mfr:"太古可口可樂",slot:"36",sellingPrice:25,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:37,name:"悅氏礦泉水 600ml",cat:"水",mfr:"悅氏",slot:"37",sellingPrice:20,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:38,name:"悅氏礦泉水 600ml",cat:"水",mfr:"悅氏",slot:"38",sellingPrice:20,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:39,name:"黑松純水 580ml",cat:"水",mfr:"黑松",slot:"39",sellingPrice:10,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:40,name:"悅氏礦泉水 600ml",cat:"水",mfr:"悅氏",slot:"40",sellingPrice:20,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:41,name:"悅氏礦泉水 600ml",cat:"水",mfr:"悅氏",slot:"41",sellingPrice:20,qty:0,restock:"",expiry:"",warnDays:30,prices:{}},
+  {id:42,name:"悅氏礦泉水 600ml",cat:"水",mfr:"悅氏",slot:"42",sellingPrice:20,qty:0,restock:"",expiry:"",warnDays:30,prices:{}}
 ];
 let nextId=43;
 let currentCat='全部';
@@ -684,6 +697,7 @@ function renderTable(){
     <th style="min-width:145px">飲料名稱</th>
     <th style="min-width:65px">類別</th>
     <th style="min-width:90px;background:rgba(167,139,250,0.07)">飲料廠商</th>
+    <th style="min-width:70px;background:rgba(74,222,128,0.07)">販售價</th>
     ${stores.map((s,i)=>`<th style="min-width:82px"><span style="display:inline-flex;align-items:center;gap:4px">
       <span style="width:6px;height:6px;border-radius:50%;background:${sc(i)};display:inline-block"></span>${s.name}</span></th>`).join('')}
     <th style="min-width:70px">最低價</th>
@@ -726,6 +740,9 @@ function renderTable(){
       <td class="td-name">${item.name}</td>
       <td><span class="badge-cat">${item.cat}</span></td>
       <td>${mfrBadge}</td>
+      <td style="background:rgba(74,222,128,0.04);font-family:var(--mono);font-size:13px;font-weight:600;color:var(--accent);text-align:center">
+        ${item.sellingPrice>0?`NT$${item.sellingPrice}`:'<span style="color:var(--text3);font-size:11px;font-weight:400">未設定</span>'}
+      </td>
       ${pcs}
       <td class="pc best">${b!=null?'$'+b:'<span class="pc none">未查價</span>'}</td>
       <td>${b!=null?badges:'<span style="color:var(--text3);font-size:11px">—</span>'}</td>
@@ -755,6 +772,7 @@ function renderQuickAdd(){
     <div class="ag mid"><label>類別</label><select id="qa_cat"><option>碳酸飲料</option><option>茶飲</option><option>咖啡</option><option>果汁</option><option>能量飲料</option><option>水</option><option>其他</option></select></div>
     <div class="ag mid"><label>飲料廠商</label><select id="qa_mfr">${mfrOpts}</select></div>
     <div class="ag short"><label>庫存</label><input id="qa_qty" type="number" min="0" placeholder="0"></div>
+    <div class="ag short"><label style="color:var(--accent)">販售價</label><input id="qa_sellingPrice" type="number" min="0" placeholder="NT$"></div>
     <div class="ag short"><label>倉道號碼</label><select id="qa_slot"></select></div>
     <div class="ag date"><label>進貨日期</label><input id="qa_restock" type="date" value="${todayStr()}"></div>
     <div class="ag date"><label>商品效期</label><input id="qa_expiry" type="date"></div>
@@ -862,6 +880,7 @@ function openAddItemModal(){
   document.getElementById('im_name').value='';
   document.getElementById('im_qty').value='';
   document.getElementById('im_slot').value='';
+  document.getElementById('im_sellingPrice').value='';
   document.getElementById('im_restock').value=todayStr();
   document.getElementById('im_expiry').value='';
   document.getElementById('im_warn').value='30';
@@ -878,6 +897,7 @@ function confirmAddItem(){
     cat:document.getElementById('im_cat').value,
     mfr:document.getElementById('im_mfr').value,
     slot:document.getElementById('im_slot').value,
+    sellingPrice:parseInt(document.getElementById('im_sellingPrice').value)||0,
     qty:parseInt(document.getElementById('im_qty').value)||0,
     restock:document.getElementById('im_restock').value||'',
     expiry:document.getElementById('im_expiry').value||'',
@@ -896,6 +916,7 @@ function openEditModal(id){
   document.getElementById('im_expiry').value=item.expiry||'';
   document.getElementById('im_warn').value=item.warnDays||30;
   document.getElementById('im_slot').value=item.slot||'';
+  document.getElementById('im_sellingPrice').value=item.sellingPrice||0;
   refreshMfrSelect(item.mfr);
   buildPriceGrid(n=>(item.prices&&item.prices[n]!=null)?item.prices[n]:'');
   document.getElementById('itemConfirmBtn').textContent='儲存';
@@ -904,6 +925,7 @@ function openEditModal(id){
     item.cat=document.getElementById('im_cat').value;
     item.mfr=document.getElementById('im_mfr').value;
     item.slot=document.getElementById('im_slot').value;
+    item.sellingPrice=parseInt(document.getElementById('im_sellingPrice').value)||0;
     item.qty=parseInt(document.getElementById('im_qty').value)||0;
     item.restock=document.getElementById('im_restock').value||'';
     item.expiry=document.getElementById('im_expiry').value||'';
@@ -925,6 +947,7 @@ function quickAdd(){
     cat:document.getElementById('qa_cat').value,
     mfr:document.getElementById('qa_mfr').value,
     slot:document.getElementById('qa_slot').value,
+    sellingPrice:parseInt(document.getElementById('qa_sellingPrice')?.value)||0,
     qty:parseInt(document.getElementById('qa_qty').value)||0,
     restock:document.getElementById('qa_restock').value||'',
     expiry:document.getElementById('qa_expiry').value||'',
@@ -960,14 +983,14 @@ function buildSlotOptions(){
 
 // ══ 販售資料 ══
 let sales=[
-  {id:1,date:daysFromNow(-3),slot:'2',itemName:'可口可樂 330ml',qty:5,price:25,cost:0,note:''},
-  {id:2,date:daysFromNow(-3),slot:'19',itemName:'紅牛 250ml',qty:2,price:65,cost:0,note:''},
-  {id:3,date:daysFromNow(-2),slot:'39',itemName:'黑松純水 580ml',qty:8,price:10,cost:0,note:''},
-  {id:4,date:daysFromNow(-2),slot:'12',itemName:'麥香奶茶 340ml',qty:4,price:25,cost:0,note:''},
-  {id:5,date:daysFromNow(-1),slot:'8',itemName:'伯朗咖啡(咖) 330ml',qty:3,price:25,cost:0,note:''},
-  {id:6,date:daysFromNow(-1),slot:'1',itemName:'海鹽沙士 330ml',qty:6,price:25,cost:0,note:''},
+  {id:1,date:"2026-05-10",slot:"2",itemName:"可口可樂 330ml",qty:5,price:25,cost:0,note:""},
+  {id:2,date:"2026-05-10",slot:"19",itemName:"紅牛 250ml",qty:2,price:65,cost:0,note:""},
+  {id:3,date:"2026-05-11",slot:"39",itemName:"黑松純水 580ml",qty:8,price:10,cost:0,note:""},
+  {id:4,date:"2026-05-11",slot:"12",itemName:"麥香奶茶 340ml",qty:4,price:25,cost:0,note:""},
+  {id:5,date:"2026-05-12",slot:"8",itemName:"伯朗咖啡(咖) 330ml",qty:3,price:25,cost:0,note:""},
+  {id:6,date:"2026-05-12",slot:"1",itemName:"海鹽沙士 330ml",qty:6,price:25,cost:0,note:""}
 ];
-let nextSaleId=11;
+let nextSaleId=7;
 
 function switchPage(page){
   const inv=document.getElementById('page-inventory');
